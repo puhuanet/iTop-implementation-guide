@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension format="1.0">
+	<extension_code>puhuanet-mgmt-cust</extension_code>
+	<company>PUHUA.NET</company>
+	<author>Chen Hao</author>
+	<label>Custom the management module</label>
+	<description></description>
+	<version>1.0.0</version>
+	<release_date>2020-03-31</release_date>
+	<version_description>></version_description>
+	<itop_version_min>2.6.0</itop_version_min>
+	<status>stable</status>
+	<mandatory>false</mandatory>
+	<more_info_url></more_info_url>
+</extension>
