@@ -1810,8 +1810,9 @@
 		</menu>
 	</menus>
 	<user_rights>
-		<profiles>
+		<!-- <profiles>
 			<profile id="2">
+				<name>Portal user</name>
 				<groups>
 					<group id="Incident" _delta="define">
 						<actions>
@@ -1822,7 +1823,7 @@
 					</group>
 				</groups>
 			</profile>
-		</profiles>
+		</profiles> -->
 	</user_rights>
 	<module_designs>
 		<module_design id="itop-portal">
