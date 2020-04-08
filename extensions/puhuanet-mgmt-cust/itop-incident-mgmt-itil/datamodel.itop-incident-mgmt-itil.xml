@@ -390,7 +390,7 @@
 					</item>
 				</highlight_scale>
 				<attribute>status</attribute>
-				<stimuli>
+				<stimuli> <!-- 定义动作 -->
 					<stimulus id="ev_assign" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_reassign" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_pending" xsi:type="StimulusUserAction"/>
@@ -401,9 +401,9 @@
 					<stimulus id="ev_close" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_reopen" xsi:type="StimulusUserAction"/>
 				</stimuli>
-				<states>
+				<states> <!-- 定义状态 -->
 					<state id="new">
-						<flags>
+						<flags> <!-- 定义当前状态下的字段是否可写、只读、是否必填 -->
 							<attribute id="ref">
 								<read_only/>
 							</attribute>
@@ -413,12 +413,14 @@
 							<attribute id="caller_id">
 								<mandatory/>
 							</attribute>
-							<attribute id="team_id">
+							<!-- by Chen Hao -->
+							<!-- <attribute id="team_id">
 								<hidden/>
 							</attribute>
 							<attribute id="agent_id">
 								<hidden/>
-							</attribute>
+							</attribute> -->
+							<!-- EOF by Chen Hao -->
 							<attribute id="priority">
 								<read_only/>
 							</attribute>
@@ -437,9 +439,14 @@
 							<attribute id="escalation_reason">
 								<hidden/>
 							</attribute>
-							<attribute id="assignment_date">
+							<!-- by Chen Hao -->
+							<!-- <attribute id="assignment_date">
 								<hidden/>
+							</attribute> -->
+							<attribute id="assignment_date">
+								<read_only/>
 							</attribute>
+							<!-- EOF by Chen Hao -->
 							<attribute id="resolution_date">
 								<hidden/>
 							</attribute>
@@ -493,10 +500,10 @@
 							</attribute>
 							<!-- EOF 2020/03/30 去掉'指派'节点 by Chen Hao -->
 						</flags>
-						<transitions>
+						<transitions> <!-- 定义流程出口 -->
 							<!-- 2020/03/30 去掉'指派'节点 by Chen Hao -->
-							<!-- 
-							<transition id="ev_assign">
+							 
+							<!-- <transition id="ev_assign">
 								<target>assigned</target>
 								<actions>
 									<action>
@@ -506,9 +513,19 @@
 										</params>
 									</action>
 								</actions>
-							</transition>
-							-->
+							</transition> -->							
 							
+							<transition id="ev_pending">
+								<target>pending</target>
+								<actions>
+									<action>
+										<verb>SetCurrentDate</verb>
+										<params>
+											<param xsi:type="attcode">last_pending_date</param>
+										</params>
+									</action>
+								</actions>
+							</transition>
 							<transition id="ev_resolve">
 								<target>resolved</target>
 								<actions>
@@ -532,7 +549,18 @@
 									</action>
 								</actions>
 							</transition>
-							
+							<transition id="ev_reassign">
+								<target>assigned</target>
+								<actions/>
+								<flags>
+									<attribute id="agent_id">
+										<must_change/>
+									</attribute>
+									<attribute id="team_id">
+										<must_prompt/>
+									</attribute>
+								</flags>
+							</transition>
 							<!-- EOF 2020/03/30 去掉'指派'节点 by Chen Hao -->
 
 							<transition id="ev_timeout">
@@ -563,7 +591,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state>
+					</state> <!-- new -->
 					<state id="escalated_tto">
 						<highlight>
 							<code>critical</code>
@@ -582,7 +610,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state>
+					</state> <!-- escalated_tto -->
 					<state id="assigned">
 						<inherit_flags_from>new</inherit_flags_from>
 						<flags>
@@ -690,7 +718,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state>
+					</state> <!-- assigned -->
 					<state id="escalated_ttr">
 						<highlight>
 							<code>critical</code>
@@ -760,7 +788,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state>
+					</state> <!-- escalated_ttr -->
 					<state id="pending">
 						<inherit_flags_from>assigned</inherit_flags_from>
 						<flags>
@@ -811,7 +839,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state>
+					</state> <!-- pending -->
 					<state id="resolved">
 						<highlight>
 							<code>closed</code>
@@ -936,7 +964,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state>
+					</state> <!-- resolved -->
 					<state id="closed">
 						<highlight>
 							<code>closed</code>
@@ -983,7 +1011,7 @@
 							</attribute>
 						</flags>
 						<transitions/>
-					</state>
+					</state> <!-- closed -->
 				</states>
 			</lifecycle>
 			<methods>
@@ -1401,6 +1429,9 @@
 		$this->ComputeImpactedItems();
 		$this->SetIfNull('last_update', time());
 		$this->SetIfNull('start_date', time());
+		// 工单分派日期 by Chen Hao 
+		$this->SetIfNull('assignment_date', time());
+		// EOF 工单分派日期 by Chen Hao 
 	}]]></code>
 				</method>
 				<method id="OnUpdate">
