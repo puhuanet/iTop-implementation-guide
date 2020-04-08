@@ -420,6 +420,14 @@
 							<attribute id="agent_id">
 								<hidden/>
 							</attribute> -->
+							<attribute id="team_id">
+								<mandatory/>
+								<must_prompt/>
+							</attribute>
+							<attribute id="agent_id">
+								<mandatory/>
+								<must_prompt/>
+							</attribute>
 							<!-- EOF by Chen Hao -->
 							<attribute id="priority">
 								<read_only/>
@@ -489,16 +497,6 @@
 							<attribute id="sla_ttr_over">
 								<hidden/>
 							</attribute>
-							<!-- 2020/03/30 去掉'指派'节点 by Chen Hao -->
-							<attribute id="team_id">
-								<mandatory/>
-								<must_prompt/>
-							</attribute>
-							<attribute id="agent_id">
-								<mandatory/>
-								<must_prompt/>
-							</attribute>
-							<!-- EOF 2020/03/30 去掉'指派'节点 by Chen Hao -->
 						</flags>
 						<transitions> <!-- 定义流程出口 -->
 							<!-- 2020/03/30 去掉'指派'节点 by Chen Hao -->
@@ -526,6 +524,7 @@
 									</action>
 								</actions>
 							</transition>
+
 							<transition id="ev_resolve">
 								<target>resolved</target>
 								<actions>
@@ -549,9 +548,17 @@
 									</action>
 								</actions>
 							</transition>
+
 							<transition id="ev_reassign">
 								<target>assigned</target>
-								<actions/>
+								<actions>
+									<action>
+										<verb>SetCurrentDate</verb>
+										<params>
+											<param xsi:type="attcode">assignment_date</param>
+										</params>
+									</action>
+								</actions>
 								<flags>
 									<attribute id="agent_id">
 										<must_change/>
@@ -1430,7 +1437,13 @@
 		$this->SetIfNull('last_update', time());
 		$this->SetIfNull('start_date', time());
 		// 工单分派日期 by Chen Hao 
-		$this->SetIfNull('assignment_date', time());
+		// Portal门户新创建的工单没有指派处理人
+		// 如果处理人id不为0,则设定分派日期并设置状态为已指派
+		if ($this->Get('agent_id') != 0)
+		{
+			$this->SetIfNull('assignment_date', time());
+			$this->Set('status','assigned');
+		}
 		// EOF 工单分派日期 by Chen Hao 
 	}]]></code>
 				</method>
@@ -1841,6 +1854,7 @@
 		</menu>
 	</menus>
 	<user_rights>
+		<!-- by Chen Hao -->
 		<!-- <profiles>
 			<profile id="2">
 				<name>Portal user</name>
@@ -1855,6 +1869,7 @@
 				</groups>
 			</profile>
 		</profiles> -->
+		<!-- EOF by Chen Hao -->
 	</user_rights>
 	<module_designs>
 		<module_design id="itop-portal">
