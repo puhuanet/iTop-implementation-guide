@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.6">
-	<constants>
-		<constant id="PORTAL_TYPE_TO_CLASS" xsi:type="string" _delta="redefine"><![CDATA[{"service_request":"UserRequest","incident":"Incident"}]]></constant>
-		<constant id="PORTAL_INCIDENT_PUBLIC_LOG" xsi:type="string" _delta="define"><![CDATA[public_log]]></constant>
-		<constant id="PORTAL_INCIDENT_USER_COMMENT" xsi:type="string" _delta="define"><![CDATA[user_comment]]></constant>
-		<constant id="PORTAL_INCIDENT_FORM_ATTRIBUTES" xsi:type="string" _delta="define"><![CDATA[title,description,impact,urgency]]></constant>
-		<constant id="PORTAL_INCIDENT_TYPE" xsi:type="string" _delta="define"><![CDATA[]]></constant>
-		<constant id="PORTAL_INCIDENT_LIST_ZLIST" xsi:type="string" _delta="define"><![CDATA[finalclass,title,start_date,status,servicesubcategory_id,priority,caller_id]]></constant>
-		<constant id="PORTAL_INCIDENT_CLOSED_ZLIST" xsi:type="string" _delta="define"><![CDATA[title,start_date,close_date,servicesubcategory_id]]></constant>
-		<constant id="PORTAL_INCIDENT_DETAILS_ZLIST" xsi:type="string" _delta="define"><![CDATA[{"col:left":["ref","caller_id","servicesubcategory_id","title","description","solution"],"col:right":["status","priority","start_date","resolution_date","last_update","agent_id"]}]]></constant>
-		<constant id="PORTAL_INCIDENT_DISPLAY_QUERY" xsi:type="string" _delta="define"><![CDATA[SELECT Incident WHERE org_id = :contact->org_id AND caller_id = :contact->id]]></constant>
-		<constant id="PORTAL_INCIDENT_DISPLAY_POWERUSER_QUERY" xsi:type="string" _delta="define"><![CDATA[SELECT Incident WHERE org_id = :contact->org_id]]></constant>
-	</constants>
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.7">
 	<classes>
 		<class id="Incident" _delta="define">
 			<parent>Ticket</parent>
@@ -390,7 +378,7 @@
 					</item>
 				</highlight_scale>
 				<attribute>status</attribute>
-				<stimuli> <!-- 定义动作 -->
+				<stimuli>
 					<stimulus id="ev_assign" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_reassign" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_pending" xsi:type="StimulusUserAction"/>
@@ -401,9 +389,9 @@
 					<stimulus id="ev_close" xsi:type="StimulusUserAction"/>
 					<stimulus id="ev_reopen" xsi:type="StimulusUserAction"/>
 				</stimuli>
-				<states> <!-- 定义状态 -->
+				<states>
 					<state id="new">
-						<flags> <!-- 定义当前状态下的字段是否可写、只读、是否必填 -->
+						<flags>
 							<attribute id="ref">
 								<read_only/>
 							</attribute>
@@ -569,7 +557,6 @@
 								</flags>
 							</transition>
 							<!-- EOF 2020/03/30 去掉'指派'节点 by Chen Hao -->
-
 							<transition id="ev_timeout">
 								<target>escalated_tto</target>
 								<actions/>
@@ -598,7 +585,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state> <!-- new -->
+					</state>
 					<state id="escalated_tto">
 						<highlight>
 							<code>critical</code>
@@ -617,7 +604,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state> <!-- escalated_tto -->
+					</state>
 					<state id="assigned">
 						<inherit_flags_from>new</inherit_flags_from>
 						<flags>
@@ -725,7 +712,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state> <!-- assigned -->
+					</state>
 					<state id="escalated_ttr">
 						<highlight>
 							<code>critical</code>
@@ -795,7 +782,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state> <!-- escalated_ttr -->
+					</state>
 					<state id="pending">
 						<inherit_flags_from>assigned</inherit_flags_from>
 						<flags>
@@ -846,7 +833,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state> <!-- pending -->
+					</state>
 					<state id="resolved">
 						<highlight>
 							<code>closed</code>
@@ -971,7 +958,7 @@
 								</actions>
 							</transition>
 						</transitions>
-					</state> <!-- resolved -->
+					</state>
 					<state id="closed">
 						<highlight>
 							<code>closed</code>
@@ -1018,10 +1005,21 @@
 							</attribute>
 						</flags>
 						<transitions/>
-					</state> <!-- closed -->
+					</state>
 				</states>
 			</lifecycle>
 			<methods>
+				<method id="GetTicketRefFormat">
+					<static>true</static>
+					<access>public</access>
+					<type>Overload-DBObject</type>
+					<code><![CDATA[
+        public static function GetTicketRefFormat()
+        {
+                return 'I-%06d';
+        }
+        ]]></code>
+				</method>
 				<method id="SetAssignedDate">
 					<comment><![CDATA[/**
 	 * To be deprecated: use SetCurrentDate() instead
@@ -1160,17 +1158,17 @@
 			if (MetaModel::IsValidClass('KnownError'))
 			{
 				//Search for known errors
-				$oPage->SetCurrentTab(Dict::S('Class:UserRequest:KnownErrorList'));
+				$oPage->SetCurrentTab('Class:UserRequest:KnownErrorList');
 				$iTicketID = $this->GetKey();;
 				$oKnownErrorSet = new CMDBObjectSet(DBObjectSearch::FromOQL("SELECT KnownError AS ke JOIN lnkErrorToFunctionalCI AS l1 ON l1.error_id=ke.id JOIN FunctionalCI AS ci ON l1.functionalci_id=ci.id JOIN lnkFunctionalCIToTicket AS l2 ON l2.functionalci_id=ci.id WHERE l2.ticket_id=$iTicketID"));
 				$iNumberKE=$oKnownErrorSet->count();
 				if ($iNumberKE > 0)
 				{
-					$oPage->SetCurrentTab(Dict::S('Class:UserRequest:KnownErrorList')." ($iNumberKE)");
+					$oPage->SetCurrentTab('Class:UserRequest:KnownErrorList', Dict::S('Class:UserRequest:KnownErrorList')." ($iNumberKE)");
 				}
 				else
 				{
-					$oPage->SetCurrentTab(Dict::S('Class:UserRequest:KnownErrorList'));	
+					$oPage->SetCurrentTab('Class:UserRequest:KnownErrorList');
 				}			
 				self::DisplaySet($oPage, $oKnownErrorSet, array ('menu' => false));
 			}
@@ -1444,7 +1442,7 @@
 			$this->SetIfNull('assignment_date', time());
 			$this->Set('status','assigned');
 		}
-		// EOF 工单分派日期 by Chen Hao 
+		// EOF 工单分派日期 by Chen Hao 										
 	}]]></code>
 				</method>
 				<method id="OnUpdate">

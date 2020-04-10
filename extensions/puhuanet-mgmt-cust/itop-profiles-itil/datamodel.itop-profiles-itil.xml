@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<itop_design version="1.6">
+<itop_design xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.7">
   <classes/>
   <user_rights>
     <groups>
@@ -166,13 +166,14 @@
           <class id="QueryOQL"/>
           <!-- SynchroData group -->
           <class id="SynchroDataSource"/>
+					<class id="SynchroAttribute"/>
         </classes>
       </group>
     </groups>
     <profiles>
       <profile id="3" _delta="define">
         <name>Configuration Manager</name>
-        <description>Person in charge of the documentation of the managed CIs 配置管理者-负责对已受控配置项进行文档化管理 </description>
+        <description>Person in charge of the documentation of the managed CIs \r\n 配置管理者-负责对已受控配置项进行文档化管理</description>
         <groups>
           <group id="General">
             <actions>
@@ -220,7 +221,7 @@
               <action id="action:write">allow</action>
               <action id="action:bulk write">allow</action>
               <action id="stimulus:ev_assign">allow</action>
-              <!-- 修改权限 -->
+              <!-- 修改权限 by Chen Hao -->
               <action id="stimulus:ev_reassign">allow</action>
               <action id="stimulus:ev_pending">allow</action>
               <action id="stimulus:ev_close">allow</action>
@@ -233,12 +234,6 @@
               <action id="action:write">allow</action>
               <action id="action:bulk write">allow</action>
               <action id="stimulus:ev_assign">allow</action>
-              <!-- 修改权限 -->
-              <action id="stimulus:ev_reassign">allow</action>
-              <action id="stimulus:ev_pending">allow</action>
-              <action id="stimulus:ev_close">allow</action>
-              <action id="stimulus:ev_reopen">allow</action>
-              <!-- EOF 修改权限 -->
             </actions>
           </group>
           <group id="*">
@@ -263,28 +258,28 @@
           </group>
           <group id="Incident">
             <actions>
+              <!-- 修改权限 by Chen Hao -->
               <action id="action:write">allow</action>
               <action id="action:bulk write">allow</action>
+              <!-- <action id="stimulus:ev_assign">allow</action> -->
               <action id="stimulus:ev_reassign">allow</action>
               <action id="stimulus:ev_resolve">allow</action>
+              <!-- <action id="stimulus:ev_close">allow</action> -->
               <action id="stimulus:ev_pending">allow</action>
-              <!-- 修改权限 -->
-              <!-- <action id="stimulus:ev_assign">allow</action>
-              <action id="stimulus:ev_close">allow</action> -->
-              <!-- EOF 修改权限 -->
+              <!-- EOF 修改权限 -->   
             </actions>
           </group>
           <group id="UserRequest">
             <actions>
+              <!-- 修改权限 by Chen Hao -->
               <action id="action:write">allow</action>
               <action id="action:bulk write">allow</action>
+              <!-- <action id="stimulus:ev_assign">allow</action> -->
               <action id="stimulus:ev_reassign">allow</action>
               <action id="stimulus:ev_resolve">allow</action>
+              <!-- <action id="stimulus:ev_close">allow</action> -->
               <action id="stimulus:ev_pending">allow</action>
               <action id="stimulus:ev_wait_for_approval">allow</action>
-              <!-- 修改权限 -->
-              <!-- <action id="stimulus:ev_assign">allow</action>
-              <action id="stimulus:ev_close">allow</action> -->
               <!-- EOF 修改权限 -->
             </actions>
           </group>
@@ -522,7 +517,7 @@
       </profile>
       <profile id="2" _delta="define">
         <name>Portal user</name>
-        <description>Has the rights to accss to the user portal. People having this profile will not be allowed to access the standard application, they will be automatically redirected to the user portal. </description>
+        <description>Has the rights to access to the user portal. People having this profile will not be allowed to access the standard application, they will be automatically redirected to the user portal.</description>
         <groups>
           <group id="Portal">
             <actions>
@@ -534,12 +529,12 @@
             <actions>
               <action id="action:write">allow</action>
               <action id="stimulus:ev_close">allow</action>
-              <!-- 修改权限 -->
+              <!-- 修改权限 by Chen Hao-->
               <!-- <action id="stimulus:ev_reopen">allow</action> -->
               <!-- 修改权限 -->
             </actions>
           </group>
-          <!-- 修改权限 -->
+          <!-- 修改权限 by Chen Hao -->
           <group id="Incident">
             <actions>
               <action id="action:write">allow</action>
@@ -558,7 +553,7 @@
       </profile>
       <profile id="12" _delta="define">
         <name>Portal power user</name>
-        <description>Users having this profile will have the rights to see all the tickets for a customer in the portal. Must be used in conjunction with other profiles (e.g. Portal User). </description>
+        <description>Users having this profile will have the rights to see all the tickets for a customer in the portal. Must be used in conjunction with other profiles (e.g. Portal User).</description>
         <groups/>
       </profile>
     </profiles>
